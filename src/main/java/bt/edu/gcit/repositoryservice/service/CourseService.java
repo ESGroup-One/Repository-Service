@@ -81,4 +81,35 @@ public class CourseService {
 
         return Collections.emptyList();
     }
+
+    public Course getCourseById(String id) {
+        return courseRepository.findById(id)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.NOT_FOUND, "Course not found"));
+    }
+
+    public long getCourseCountByAdmin(String token) {
+        // 1. Clean the token
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        // 2. Extract identifier from token
+        String identifier = jwtUtil.extractIdentifier(token);
+
+        // 3. Find the admin user in the database
+        Query query = new Query(new Criteria().orOperator(
+                Criteria.where("indexNumber").is(identifier),
+                Criteria.where("email").is(identifier)));
+
+        Map<String, Object> adminUser = mongoTemplate.findOne(query, Map.class, "users");
+
+        if (adminUser != null) {
+            String adminId = adminUser.get("_id").toString();
+            // 4. Return the count from the repository
+            return courseRepository.countByCollegeId(adminId);
+        }
+
+        return 0L;
+    }
 }

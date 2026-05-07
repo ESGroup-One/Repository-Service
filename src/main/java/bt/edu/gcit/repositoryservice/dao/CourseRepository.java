@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface CourseRepository extends MongoRepository<Course, String> {
     List<Course> findByCollegeId(String collegeId);
+    long countByCollegeId(String collegeId);
 }

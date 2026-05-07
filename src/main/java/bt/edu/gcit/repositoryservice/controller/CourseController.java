@@ -32,4 +32,15 @@ public class CourseController {
     public ResponseEntity<List<Course>> getMyCourses(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(courseService.getCoursesByAdmin(token));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Course> getCourseById(@PathVariable String id) {
+        return ResponseEntity.ok(courseService.getCourseById(id));
+    }
+
+    @GetMapping("/my-count")
+    public ResponseEntity<Long> getMyCourseCount(@RequestHeader("Authorization") String token) {
+        long count = courseService.getCourseCountByAdmin(token);
+        return ResponseEntity.ok(count);
+    }
 }
